@@ -1,0 +1,52 @@
+name: agent-router
+
+services:
+  database:
+    image: postgres:16.15-alpine3.24
+    container_name: agent-router-postgres
+    environment:
+      POSTGRES_DB: litellm
+      POSTGRES_USER: litellm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - litellm_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U litellm -d litellm"]
+      interval: 2s
+      timeout: 5s
+      retries: 15
+
+  litellm:
+    image: ghcr.io/berriai/litellm:v1.98.0
+    container_name: agent-router-litellm
+    command: ["--config", "/app/config.yaml", "--host", "0.0.0.0", "--port", "4000"]
+    ports:
+      - "127.0.0.1:4000:4000"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      UPSTREAM_LITELLM_URL: ${UPSTREAM_LITELLM_URL:?Set UPSTREAM_LITELLM_URL in .env}
+      UPSTREAM_LITELLM_API_KEY: ${UPSTREAM_LITELLM_API_KEY:?Set UPSTREAM_LITELLM_API_KEY in .env}
+      UPSTREAM_EXPLORER_MODEL: ${UPSTREAM_EXPLORER_MODEL:?Set UPSTREAM_EXPLORER_MODEL in .env}
+      UPSTREAM_CODER_MODEL: ${UPSTREAM_CODER_MODEL:?Set UPSTREAM_CODER_MODEL in .env}
+      LOCAL_LITELLM_MASTER_KEY: ${LOCAL_LITELLM_MASTER_KEY:?Set LOCAL_LITELLM_MASTER_KEY in .env}
+      DATABASE_URL: postgresql://litellm:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@database:5432/litellm
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:?Set LITELLM_SALT_KEY in .env}
+      LITELLM_DISABLE_NO_REDIS_WARNING: "true"
+      UI_USERNAME: admin
+      UI_PASSWORD: ${UI_PASSWORD:?Set UI_PASSWORD in .env}
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:4000/health/liveliness')"
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  litellm_postgres_data:
+    name: agent-router-litellm-postgres-data
