@@ -1,0 +1,57 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "orchestrator",
+  "providers": {
+    "router": {
+      "name": "Local LiteLLM",
+      "env": ["LOCAL_LITELLM_MASTER_KEY"],
+      "package": "@opencode-ai/ai/providers/openai-compatible",
+      "settings": {
+        "baseURL": "http://127.0.0.1:4000/v1",
+        "apiKey": "{env:LOCAL_LITELLM_MASTER_KEY}"
+      },
+      "models": {
+        "worker-explorer": {
+          "name": "Worker Explorer",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "worker-coder": {
+          "name": "Worker Coder",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "orchestrator": {
+          "name": "Orchestrator",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "reviewer": {
+          "name": "Reviewer",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        },
+        "reviewer-specialist": {
+          "name": "Reviewer Specialist",
+          "capabilities": {
+            "tools": true,
+            "input": ["text"],
+            "output": ["text"]
+          }
+        }
+      }
+    }
+  }
+}
