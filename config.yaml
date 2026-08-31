@@ -1,4 +1,22 @@
 model_list:
+  - model_name: orchestrator
+    litellm_params:
+      model: os.environ/UPSTREAM_ORCHESTRATOR_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: orchestrator-fallback
+    litellm_params:
+      model: os.environ/UPSTREAM_ORCHESTRATOR_FALLBACK_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
   - model_name: worker-explorer
     litellm_params:
       model: os.environ/UPSTREAM_EXPLORER_MODEL
@@ -39,12 +57,74 @@ model_list:
       api_key: os.environ/UPSTREAM_LITELLM_API_KEY
       num_retries: 0
 
+  - model_name: reviewer
+    litellm_params:
+      model: os.environ/UPSTREAM_REVIEWER_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: reviewer-fallback
+    litellm_params:
+      model: os.environ/UPSTREAM_REVIEWER_FALLBACK_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: reviewer-specialist
+    litellm_params:
+      model: os.environ/UPSTREAM_SPECIALIST_REVIEWER_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: reviewer-specialist-fallback
+    litellm_params:
+      model: os.environ/UPSTREAM_SPECIALIST_REVIEWER_FALLBACK_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: coder-specialist-global
+    litellm_params:
+      model: os.environ/UPSTREAM_GLOBAL_SPECIALIST_CODER_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
+  - model_name: coder-specialist-global-fallback
+    litellm_params:
+      model: os.environ/UPSTREAM_GLOBAL_SPECIALIST_CODER_FALLBACK_MODEL
+      custom_llm_provider: openai
+      api_base: os.environ/UPSTREAM_LITELLM_URL
+      api_key: os.environ/UPSTREAM_LITELLM_API_KEY
+      stream_timeout: os.environ/CLOUD_MODEL_TIMEOUT_SECONDS
+      num_retries: 0
+
 router_settings:
   fallbacks:
+    - orchestrator:
+        - orchestrator-fallback
     - worker-explorer:
         - worker-explorer-fallback
     - worker-coder:
         - worker-coder-fallback
+    - reviewer:
+        - reviewer-fallback
+    - reviewer-specialist:
+        - reviewer-specialist-fallback
+    - coder-specialist-global:
+        - coder-specialist-global-fallback
   max_fallbacks: 1
   num_retries: 0
   allowed_fails: 2
