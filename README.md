@@ -44,13 +44,6 @@ coder-specialist-global  → coder-specialist-global fallback  → error
 
 The internal `*-fallback` model groups exist only to implement LiteLLM's ordered fallback configuration; they are not supported client-facing aliases.
 
-The existing worker routing is preserved:
-
-```text
-worker-explorer  → worker-explorer fallback  → error
-worker-coder     → worker-coder fallback     → error
-```
-
 ## OpenCode
 
 The `/opencode` directory adds capability orchestration above the repository's local LiteLLM availability router.
